@@ -1,290 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Premium Entertainment Hub</title>
-    <style>
-        :root {
-            /* Restored original premium dark purple theme background */
-            --bg-gradient: #330011;
-            
-            /* Restored original subtle dark card variables */
-            --card-bg: rgba(255, 255, 255, 0.08);
-            --card-border: rgba(255, 255, 255, 0.18);
-            
-            --text-primary: #ffffff;
-            --text-secondary: #b3b3b3;
-            --accent-glow: linear-gradient(45deg, #ff007f, #7f00ff, #00f0ff);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            -webkit-tap-highlight-color: transparent; /* Removes default mobile tap highlight box */
-        }
-
-        body {
-            background: var(--bg-gradient);
-            color: var(--text-primary);
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden; /* Prevents webview scrolling completely */
-            padding: 12px;
-        }
-
-        header {
-            text-align: center;
-            padding: 10px 0;
-            flex-shrink: 0;
-            z-index: 1;
-        }
-
-        header h1 {
-            font-size: 1.6rem;
-            font-weight: 800;
-            background: linear-gradient(180deg, #fff 0%, #bbb 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        header p {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            margin-top: 2px;
-        }
-
-        /* Full Height Grid Configuration (2x3 Layout, no scrolling) */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 12px;
-            width: 100%;
-            flex-grow: 1;
-            padding-bottom: 8px;
-            z-index: 1;
-        }
-
-        /* Restored original block color scheme with updated mobile features */
-        .media-block {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 10px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            /* Keeps the premium click physics */
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s, border 0.3s;
-        }
-
-        /* Original premium gradient border highlight outline */
-        .media-block::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: var(--accent-glow);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            z-index: 0;
-            padding: 1px;
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask-composite: xor;
-            -webkit-mask-composite: xor;
-        }
-
-        /* Desktop hover effect support */
-        .media-block:hover::before {
-            opacity: 0.4;
-        }
-
-        /* Interactive Premium Tap/Click Mechanics */
-        .media-block:active {
-            transform: scale(0.92) translateY(2px) !important;
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-        }
-
-        /* Activates the highlight fully when clicked */
-        .media-block:active::before {
-            opacity: 1;
-        }
-
-        .block-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .block-desc {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            padding: 0 4px;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Unchanged Premium Animation Overlay */
-        .animation-overlay {
-            position: fixed;
-            inset: 0;
-            background: #06040a;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .animation-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .premium-text {
-            font-size: 4.5rem;
-            font-weight: 900;
-            letter-spacing: 12px;
-            text-transform: uppercase;
-            background: var(--accent-glow);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            opacity: 0;
-        }
-
-        @keyframes spremium {
-            0% {
-                opacity: 0;
-                transform: scale(0.6);
-                filter: blur(10px);
-                background-position: 0% center;
-            }
-            30% {
-                opacity: 1;
-                filter: blur(0px);
-                transform: scale(1.05);
-            }
-            70% {
-                opacity: 1;
-                transform: scale(1);
-                background-position: 200% center;
-            }
-            100% {
-                opacity: 0;
-                transform: scale(1.4);
-                filter: blur(15px);
-                background-position: 400% center;
-            }
-        }
-
-        .animation-overlay.active .premium-text {
-            animation: spremium 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-
-        /* Landscape / Tablet Layout Adjustments (3x2 Grid) */
-        @media (min-width: 768px) {
-            .grid-container {
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: repeat(2, 1fr);
-            }
-            .premium-text {
-                font-size: 6rem;
-                letter-spacing: 20px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .premium-text { font-size: 2.8rem; letter-spacing: 6px; }
-            .block-title { font-size: 1.1rem; }
-            .block-desc { font-size: 0.7rem; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080a12">
+<title>SpremiumS</title>
+<style>
+:root{color-scheme:dark;--bg:#080a12;--text:#f5f7ff;--muted:#a0a8c2;--purple:#9b8cff;--teal:#5de4d2}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 15% 10%,rgba(101,78,220,.19),transparent 38%),radial-gradient(ellipse at 85% 30%,rgba(30,190,180,.11),transparent 35%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:42px 42px}
+.intro{position:fixed;z-index:10;inset:0;display:grid;place-items:center;background:var(--bg);animation:fadeIntro .8s ease 2s forwards}
+.intro span{font-size:clamp(2.5rem,11vw,6.8rem);font-weight:900;letter-spacing:.13em;background:linear-gradient(100deg,#fff 15%,#a99cff 48%,#5de4d2 85%);background-clip:text;-webkit-background-clip:text;color:transparent;opacity:0;filter:blur(12px);transform:translateY(16px) scale(.94);animation:reveal 1.1s cubic-bezier(.2,.8,.2,1) .2s forwards}
+@keyframes reveal{to{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}}
+@keyframes fadeIntro{to{opacity:0;visibility:hidden;pointer-events:none}}
+.page{width:min(1200px,calc(100% - 28px));min-height:100vh;margin:auto;padding:28px 0;display:flex;flex-direction:column}
+.brand{font-weight:850;letter-spacing:.05em;font-size:1.1rem}
+.grid{flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(190px,1fr));gap:18px;margin-top:24px}
+.main-card{position:relative;isolation:isolate;min-height:190px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:21px;border:1px solid rgba(255,255,255,.11);border-radius:22px;color:var(--text);background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform .22s,border-color .22s,background .22s;overflow:hidden}
+.main-card:after{content:"";position:absolute;z-index:-1;width:150px;height:150px;right:-70px;bottom:-95px;border-radius:50%;background:var(--glow);filter:blur(45px);opacity:.24}
+.main-card:hover{transform:translateY(-5px);border-color:rgba(177,164,255,.48);background:linear-gradient(145deg,rgba(255,255,255,.11),rgba(255,255,255,.035))}
+.main-card .button-name{display:block;font-size:clamp(1.5rem,2.6vw,1.9rem);font-weight:900;line-height:1.2;margin-bottom:10px;text-align:center}
+.button-description{display:block;color:var(--muted);font-size:clamp(.9rem,1.5vw,1rem);font-weight:400;line-height:1.5}
+.backdrop{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:18px;background:rgba(3,5,12,.68);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);opacity:0;visibility:hidden;transition:opacity .22s,visibility .22s}
+.backdrop.open{opacity:1;visibility:visible}
+.modal{width:min(620px,100%);max-height:92vh;overflow:auto;padding:28px;border:1px solid rgba(255,255,255,.17);border-radius:25px;background:linear-gradient(145deg,rgba(30,35,57,.88),rgba(12,15,28,.9));box-shadow:0 30px 100px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.08);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);transform:translateY(14px) scale(.98);transition:transform .22s}
+.open .modal{transform:translateY(0) scale(1)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.modal h2{margin:0;font-size:clamp(1.6rem,4vw,2rem)}
+.close{width:48px;height:48px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:var(--text);cursor:pointer;font-size:1.2rem}
+.sub-list{display:grid;gap:14px}
+.sub-link{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-align:center;text-decoration:none;color:var(--text);padding:20px 19px;border-radius:15px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045);transition:background .18s,border-color .18s,transform .18s}
+.sub-link:hover{transform:translateX(3px);background:rgba(155,140,255,.12);border-color:rgba(155,140,255,.35)}
+.sub-text{display:block;min-width:0;text-align:center;width:100%}
+.sub-link .button-name{display:block;font-size:1.4rem;font-weight:900;line-height:1.2;margin-bottom:8px;text-align:center}
+.sub-link .button-description{font-size:.95rem}
+button:focus-visible,a:focus-visible{outline:2px solid var(--teal);outline-offset:4px}
+@media(max-width:700px){.page{padding:22px 0;min-height:100svh}.grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(145px,1fr));gap:12px;margin-top:20px}.main-card{min-height:145px;padding:16px}.main-card .button-name{font-size:clamp(1.25rem,4.2vw,1.6rem)}}
+@media(max-width:400px){.page{width:calc(100% - 20px);padding:16px 0}.grid{gap:9px;grid-template-rows:repeat(3,minmax(125px,1fr))}.main-card{min-height:125px;padding:12px;border-radius:17px}.main-card .button-name{font-size:1.15rem}.modal{padding:18px}.sub-link{padding:17px 14px}.sub-link .button-name{font-size:1.25rem}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
 </head>
 <body>
+<div class="intro" id="intro" aria-hidden="true"><span>SpremiumS</span></div>
+<main class="page">
+  <div class="brand">SpremiumS</div>
+  <section class="grid" id="mainGrid" aria-label="Main buttons"></section>
+</main>
+<div class="backdrop" id="backdrop">
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head"><h2 id="modalTitle"></h2><button class="close" id="close" aria-label="Close">×</button></div>
+    <nav class="sub-list" id="subList"></nav>
+  </section>
+</div>
+<script>
+/* EDIT BUTTON NAMES AND URLS BELOW.
+   Each main button must contain 5 sub-buttons.
+   Replace https://example.com with your own destination URLs. */
+const categories = [
+  {title:"Button 1",icon:"✦",glow:"#9b8cff",links:[
+    {title:"Sub button 1",icon:"↗",url:"https://example.com"},
+    {title:"Sub button 2",icon:"◇",url:"https://example.com"},
+    {title:"Sub button 3",icon:"⌘",url:"https://example.com"},
+    {title:"Sub button 4",icon:"✧",url:"https://example.com"},
+    {title:"Sub button 5",icon:"➜",url:"https://example.com"}
+  ]},
+  {title:"Button 2",icon:"⌘",glow:"#5de4d2",links:[
+    {title:"Sub button 1",icon:"↗",url:"https://example.com"},
+    {title:"Sub button 2",icon:"◇",url:"https://example.com"},
+    {title:"Sub button 3",icon:"⌘",url:"https://example.com"},
+    {title:"Sub button 4",icon:"✧",url:"https://example.com"},
+    {title:"Sub button 5",icon:"➜",url:"https://example.com"}
+  ]},
+  {title:"Button 3",icon:"⇩",glow:"#ffb86b",links:[
+    {title:"Sub button 1",icon:"↗",url:"https://example.com"},
+    {title:"Sub button 2",icon:"◇",url:"https://example.com"},
+    {title:"Sub button 3",icon:"⌘",url:"https://example.com"},
+    {title:"Sub button 4",icon:"✧",url:"https://example.com"},
+    {title:"Sub button 5",icon:"➜",url:"https://example.com"}
+  ]},
+  {title:"Button 4",icon:"◎",glow:"#ff78b8",links:[
+    {title:"Sub button 1",icon:"↗",url:"https://example.com"},
+    {title:"Sub button 2",icon:"◇",url:"https://example.com"},
+    {title:"Sub button 3",icon:"⌘",url:"https://example.com"},
+    {title:"Sub button 4",icon:"✧",url:"https://example.com"},
+    {title:"Sub button 5",icon:"➜",url:"https://example.com"}
+  ]},
+  {title:"Button 5",icon:"▤",glow:"#79aaff",links:[
+    {title:"Sub button 1",icon:"↗",url:"https://example.com"},
+    {title:"Sub button 2",icon:"◇",url:"https://example.com"},
+    {title:"Sub button 3",icon:"⌘",url:"https://example.com"},
+    {title:"Sub button 4",icon:"✧",url:"https://example.com"},
+    {title:"Sub button 5",icon:"➜",url:"https://example.com"}
+  ]},
+  {title:"Button 6",icon:"•••",glow:"#b4e86c",links:[
+    {title:"Sub button 1",icon:"↗",url:"https://example.com"},
+    {title:"Sub button 2",icon:"◇",url:"https://example.com"},
+    {title:"Sub button 3",icon:"⌘",url:"https://example.com"},
+    {title:"Sub button 4",icon:"✧",url:"https://example.com"},
+    {title:"Sub button 5",icon:"➜",url:"https://example.com"}
+  ]}
+];
 
-    <div class="glow-orb"></div>
-    <div class="glow-orb-2"></div>
+const grid=document.getElementById("mainGrid");
+const backdrop=document.getElementById("backdrop");
+const modalTitle=document.getElementById("modalTitle");
+const subList=document.getElementById("subList");
+const closeButton=document.getElementById("close");
+let previousFocus=null;
 
-    <header>
-        <h1></h1>🍿🍿 Movies 🍿🍿</h1>
-        <p>Select a category</p>
-    </header>
+categories.forEach((category,index)=>{
+  const button=document.createElement("button");
+  button.type="button";
+  button.className="main-card";
+  button.style.setProperty("--glow",category.glow);
+  button.setAttribute("aria-haspopup","dialog");
+  button.innerHTML=`<span class="button-name"></span><span class="button-description">Tap to view options</span>`;
+  button.querySelector(".button-name").textContent=category.title;
+  button.addEventListener("click",()=>openCategory(index,button));
+  grid.appendChild(button);
+});
 
-    <div class="grid-container">
-        <!-- Block 1 -->
-        <div class="media-block" data-secure="YUhSMGNITTZMeTlrYjNSdGIzWnBaUzV0YjJKcEx3PT0=">
-            <div class="block-title">Bollywood</div>
-            <div class="block-desc">Latest Hindi Catalog</div>
-        </div>
-
-        <!-- Block 2 -->
-        <div class="media-block" data-secure="YUhSMGNITTZMeTl0YjNacFpYTnRiMlF1YldWdFpTOD0=">
-            <div class="block-title">Hollywood</div>
-            <div class="block-desc">Dual Audio Releases</div>
-        </div>
-
-        <!-- Block 3 -->
-        <div class="media-block" data-secure="YUhSMGNITTZMeTl1WlhjdWEyRjBaSEpoYldFdWJYa3Y=">
-            <div class="block-title">K Drama</div>
-            <div class="block-desc">Hindi & English</div>
-        </div>
-
-        <!-- Block 4 -->
-        <div class="media-block" data-secure="YUhSMGNITTZMeTl1WlhjdWNHbHJZV2hrTG1Odkx3PT0=">
-            <div class="block-title">Anime</div>
-            <div class="block-desc">Hindi & English</div>
-        </div>
-
-        <!-- Block 5 -->
-        <div class="media-block" data-secure="YUhSMGNITTZMeTkxYUdSdGIzWnBaWE11WW1WaGRYUjVMdz09">
-            <div class="block-title">4K</div>
-            <div class="block-desc">Movies & Webseries</div>
-        </div>
-
-        <!-- Block 6 -->
-        <div class="media-block" data-secure="YUhSMGNITTZMeTl6Y0hKbGJXbDFiWE11WjNRdWRHTXZlRzU0THc9PQ==">
-            <div class="block-title"> ⁠◠⁠‿⁠◕ </div>
-            <div class="block-desc">Key Required</div>
-        </div>
-    </div>
-
-    <!-- Screen Animation Interstitial -->
-    <div class="animation-overlay" id="animationOverlay">
-        <div class="premium-text">SpremiumS</div>
-    </div>
-
-    <script>
-        document.querySelectorAll('.media-block').forEach(block => {
-            block.addEventListener('click', function() {
-                const stage1 = this.getAttribute('data-secure');
-                const targetUrl = atob(atob(stage1));
-                const overlay = document.getElementById('animationOverlay');
-                
-                overlay.classList.add('active');
-                
-                setTimeout(() => {
-                    window.location.href = targetUrl;
-                }, 1700); 
-            });
-        });
-    </script>
+function openCategory(index,trigger){
+  previousFocus=trigger;
+  const category=categories[index];
+  modalTitle.textContent=category.title;
+  subList.replaceChildren();
+  category.links.forEach(link=>{
+    const anchor=document.createElement("a");
+    anchor.className="sub-link";
+    anchor.href=link.url;
+    anchor.target=link.newTab===false?"_self":"_blank";
+    if(anchor.target==="_blank")anchor.rel="noopener noreferrer";
+    const textWrap=document.createElement("span");textWrap.className="sub-text";
+    const title=document.createElement("span");title.className="button-name";title.textContent=link.title;
+    const description=document.createElement("span");description.className="button-description";description.textContent=link.description||"Open this link";
+    textWrap.append(title,description);
+    anchor.append(textWrap);subList.appendChild(anchor);
+  });
+  backdrop.classList.add("open");
+  document.body.style.overflow="hidden";
+  closeButton.focus();
+}
+function closePopup(){
+  backdrop.classList.remove("open");
+  document.body.style.overflow="";
+  if(previousFocus)previousFocus.focus();
+}
+closeButton.addEventListener("click",closePopup);
+backdrop.addEventListener("click",event=>{if(event.target===backdrop)closePopup()});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"&&backdrop.classList.contains("open"))closePopup()});
+window.addEventListener("pageshow",()=>setTimeout(()=>{document.getElementById("intro").style.display="none"},2800));
+</script>
 </body>
 </html>
