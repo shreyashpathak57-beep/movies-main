@@ -6,168 +6,283 @@
     <title>Premium Entertainment Hub</title>
     <style>
         :root {
+            /* Restored original premium dark purple theme background */
             --bg-gradient: #330011;
+            
+            /* Restored original subtle dark card variables */
             --card-bg: rgba(255, 255, 255, 0.08);
             --card-border: rgba(255, 255, 255, 0.18);
+            
             --text-primary: #ffffff;
             --text-secondary: #b3b3b3;
             --accent-glow: linear-gradient(45deg, #ff007f, #7f00ff, #00f0ff);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-gradient); color: var(--text-primary); width: 100vw; height: 100vh; display: flex; flex-direction: column; overflow: hidden; padding: 12px; }
-        header { text-align: center; padding: 10px 0; flex-shrink: 0; z-index: 10; }
-        header h1 { font-size: 1.6rem; font-weight: 800; background: linear-gradient(180deg, #fff 0%, #bbb 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        header p { color: var(--text-secondary); font-size: 0.85rem; margin-top: 2px; }
-        .view-container { width: 100%; flex-grow: 1; position: relative; }
-        
-        .grid-layout { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            grid-template-rows: repeat(3, 1fr); 
-            gap: 12px; 
-            width: 100%; 
-            height: 100%; 
-            padding-bottom: 8px; 
-            position: absolute; 
-            inset: 0; 
-            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease; 
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent; /* Removes default mobile tap highlight box */
         }
-        
-        #mainView { 
-            opacity: 1; 
-            transform: scale(1); 
-            pointer-events: all; 
-            z-index: 2;
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Prevents webview scrolling completely */
+            padding: 12px;
         }
-        
-        body.sub-menu-active #mainView { 
-            opacity: 0; 
-            transform: scale(0.85); 
-            pointer-events: none; 
+
+        header {
+            text-align: center;
+            padding: 10px 0;
+            flex-shrink: 0;
             z-index: 1;
         }
-        
-        #optionsView { 
-            opacity: 0; 
-            transform: scale(1.15); 
-            pointer-events: none; 
-            z-index: 1; 
+
+        header h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(180deg, #fff 0%, #bbb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        
-        body.sub-menu-active #optionsView { 
-            opacity: 1; 
-            transform: scale(1); 
-            pointer-events: all; 
-            z-index: 3; 
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 2px;
         }
-        
-        .media-block { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 10px; cursor: pointer; position: relative; overflow: hidden; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s, border 0.3s; }
-        .media-block.back-btn { background: rgba(255, 255, 255, 0.03); border: 1px dashed rgba(255, 255, 255, 0.35); }
-        .media-block::before { content: ''; position: absolute; inset: 0; background: var(--accent-glow); opacity: 0; transition: opacity 0.4s ease; z-index: 0; padding: 1px; -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: xor; -webkit-mask-composite: xor; }
-        .media-block:hover::before { opacity: 0.4; }
-        .media-block:active { transform: scale(0.92) translateY(2px) !important; background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.2); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); }
-        .media-block:active::before { opacity: 1; }
-        .block-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; position: relative; z-index: 1; }
-        .block-desc { font-size: 0.75rem; color: var(--text-secondary); padding: 0 4px; position: relative; z-index: 1; }
-        
-        .animation-overlay { position: fixed; inset: 0; background: #06040a; z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-        .animation-overlay.active { opacity: 1; pointer-events: all; }
-        .premium-text { font-size: 4.5rem; font-weight: 900; letter-spacing: 12px; text-transform: uppercase; background: var(--accent-glow); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; opacity: 0; }
+
+        /* Full Height Grid Configuration (2x3 Layout, no scrolling) */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            flex-grow: 1;
+            padding-bottom: 8px;
+            z-index: 1;
+        }
+
+        /* Restored original block color scheme with updated mobile features */
+        .media-block {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            /* Keeps the premium click physics */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s, border 0.3s;
+        }
+
+        /* Original premium gradient border highlight outline */
+        .media-block::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent-glow);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+            padding: 1px;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            -webkit-mask-composite: xor;
+        }
+
+        /* Desktop hover effect support */
+        .media-block:hover::before {
+            opacity: 0.4;
+        }
+
+        /* Interactive Premium Tap/Click Mechanics */
+        .media-block:active {
+            transform: scale(0.92) translateY(2px) !important;
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Activates the highlight fully when clicked */
+        .media-block:active::before {
+            opacity: 1;
+        }
+
+        .block-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .block-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            padding: 0 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Unchanged Premium Animation Overlay */
+        .animation-overlay {
+            position: fixed;
+            inset: 0;
+            background: #06040a;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .animation-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .premium-text {
+            font-size: 4.5rem;
+            font-weight: 900;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            background: var(--accent-glow);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+        }
+
         @keyframes spremium {
-            0% { opacity: 0; transform: scale(0.6); filter: blur(10px); background-position: 0% center; }
-            30% { opacity: 1; filter: blur(0px); transform: scale(1.05); }
-            70% { opacity: 1; transform: scale(1); background-position: 200% center; }
-            100% { opacity: 0; transform: scale(1.4); filter: blur(15px); background-position: 400% center; }
+            0% {
+                opacity: 0;
+                transform: scale(0.6);
+                filter: blur(10px);
+                background-position: 0% center;
+            }
+            30% {
+                opacity: 1;
+                filter: blur(0px);
+                transform: scale(1.05);
+            }
+            70% {
+                opacity: 1;
+                transform: scale(1);
+                background-position: 200% center;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.4);
+                filter: blur(15px);
+                background-position: 400% center;
+            }
         }
-        .animation-overlay.active .premium-text { animation: spremium 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
-        @media (min-width: 768px) { .grid-layout { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); } .premium-text { font-size: 6rem; letter-spacing: 20px; } }
-        @media (max-width: 400px) { .premium-text { font-size: 2.8rem; letter-spacing: 6px; } .block-title { font-size: 1.1rem; } .block-desc { font-size: 0.7rem; } }
+
+        .animation-overlay.active .premium-text {
+            animation: spremium 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        /* Landscape / Tablet Layout Adjustments (3x2 Grid) */
+        @media (min-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(2, 1fr);
+            }
+            .premium-text {
+                font-size: 6rem;
+                letter-spacing: 20px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .premium-text { font-size: 2.8rem; letter-spacing: 6px; }
+            .block-title { font-size: 1.1rem; }
+            .block-desc { font-size: 0.7rem; }
+        }
     </style>
 </head>
 <body>
 
+    <div class="glow-orb"></div>
+    <div class="glow-orb-2"></div>
+
     <header>
-        <h1 id="pageTitle">🍿🍿 Movies 🍿🍿</h1>
-        <p id="pageDesc">Select a category</p>
+        <h1></h1>🍿🍿 Movies 🍿🍿</h1>
+        <p>Select a category</p>
     </header>
 
-    <div class="view-container">
-        <!-- Main Menu -->
-        <div class="grid-layout" id="mainView">
-            <div class="media-block main-btn" data-category="Bollywood">
-                <div class="block-title">Bollywood</div>
-                <div class="block-desc">Latest Hindi Catalog</div>
-            </div>
-            <div class="media-block main-btn" data-category="Hollywood">
-                <div class="block-title">Hollywood</div>
-                <div class="block-desc">Dual Audio Releases</div>
-            </div>
-            <div class="media-block main-btn" data-category="K Drama">
-                <div class="block-title">K Drama</div>
-                <div class="block-desc">Hindi & English</div>
-            </div>
-            <div class="media-block main-btn" data-category="Anime">
-                <div class="block-title">Anime</div>
-                <div class="block-desc">Hindi & English</div>
-            </div>
-            <div class="media-block main-btn" data-category="4K">
-                <div class="block-title">4K</div>
-                <div class="block-desc">Movies & Webseries</div>
-            </div>
-            <div class="media-block main-btn" data-category="Special">
-                <div class="block-title"> ⁠◠⁠‿⁠◕ </div>
-                <div class="block-desc">Key Required</div>
-            </div>
+    <div class="grid-container">
+        <!-- Block 1 -->
+        <div class="media-block" data-secure="YUhSMGNITTZMeTlrYjNSdGIzWnBaUzV0YjJKcEx3PT0=">
+            <div class="block-title">Bollywood</div>
+            <div class="block-desc">Latest Hindi Catalog</div>
         </div>
 
-        <!-- Options Menu -->
-        <div class="grid-layout" id="optionsView">
-            <div class="media-block secure-link"><div class="block-title">Primary Server</div><div class="block-desc">Main Link</div></div>
-            <div class="media-block secure-link"><div class="block-title">Server 2</div><div class="block-desc">Fast Download</div></div>
-            <div class="media-block secure-link"><div class="block-title">Server 3</div><div class="block-desc">Cloud Mirror</div></div>
-            <div class="media-block secure-link"><div class="block-title">Torrent</div><div class="block-desc">Magnet Option</div></div>
-            <div class="media-block secure-link"><div class="block-title">Online Stream</div><div class="block-desc">Watch Instantly</div></div>
-            <div class="media-block back-btn"><div class="block-title">↩ Back</div><div class="block-desc">Return Home</div></div>
+        <!-- Block 2 -->
+        <div class="media-block" data-secure="YUhSMGNITTZMeTl0YjNacFpYTnRiMlF1YldWdFpTOD0=">
+            <div class="block-title">Hollywood</div>
+            <div class="block-desc">Dual Audio Releases</div>
+        </div>
+
+        <!-- Block 3 -->
+        <div class="media-block" data-secure="YUhSMGNITTZMeTl1WlhjdWEyRjBaSEpoYldFdWJYa3Y=">
+            <div class="block-title">K Drama</div>
+            <div class="block-desc">Hindi & English</div>
+        </div>
+
+        <!-- Block 4 -->
+        <div class="media-block" data-secure="YUhSMGNITTZMeTl1WlhjdWNHbHJZV2hrTG1Odkx3PT0=">
+            <div class="block-title">Anime</div>
+            <div class="block-desc">Hindi & English</div>
+        </div>
+
+        <!-- Block 5 -->
+        <div class="media-block" data-secure="YUhSMGNITTZMeTkxYUdSdGIzWnBaWE11WW1WaGRYUjVMdz09">
+            <div class="block-title">4K</div>
+            <div class="block-desc">Movies & Webseries</div>
+        </div>
+
+        <!-- Block 6 -->
+        <div class="media-block" data-secure="YUhSMGNITTZMeTl6Y0hKbGJXbDFiWE11WjNRdWRHTXZlRzU0THc9PQ==">
+            <div class="block-title"> ⁠◠⁠‿⁠◕ </div>
+            <div class="block-desc">Key Required</div>
         </div>
     </div>
 
+    <!-- Screen Animation Interstitial -->
     <div class="animation-overlay" id="animationOverlay">
         <div class="premium-text">SpremiumS</div>
     </div>
 
     <script>
-        const body = document.body;
-        const pageTitle = document.getElementById('pageTitle');
-        const pageDesc = document.getElementById('pageDesc');
-        const overlay = document.getElementById('animationOverlay');
-
-        // Clean event handling logic that works in all browsers and sandboxes
-        document.querySelectorAll('.main-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const category = this.getAttribute('data-category');
+        document.querySelectorAll('.media-block').forEach(block => {
+            block.addEventListener('click', function() {
+                const stage1 = this.getAttribute('data-secure');
+                const targetUrl = atob(atob(stage1));
+                const overlay = document.getElementById('animationOverlay');
                 
-                pageTitle.innerText = `🎬 ${category}`;
-                pageDesc.innerText = "Choose an alternative path";
-
-                body.classList.add('sub-menu-active');
-            });
-        });
-
-        document.querySelector('.back-btn').addEventListener('click', function() {
-            pageTitle.innerText = "🍿🍿 Movies 🍿🍿";
-            pageDesc.innerText = "Select a category";
-            
-            body.classList.remove('sub-menu-active');
-        });
-
-        document.querySelectorAll('.secure-link').forEach(linkBlock => {
-            linkBlock.addEventListener('click', function() {
                 overlay.classList.add('active');
                 
-                setTimeout(() => { 
-                    overlay.classList.remove('active');
-                    alert("Testing Mode: Options flow working perfectly!");
-                }, 1800); 
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 1700); 
             });
         });
     </script>
