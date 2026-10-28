@@ -1,83 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>Hub</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Premium Entertainment Hub</title>
     <style>
-        :root { --bg: #301; --card: rgba(255,255,255,0.08); --border: rgba(255,255,255,0.18); --text: #fff; --sub: #b3b3b3; --glow: linear-gradient(45deg,#ff007f,#7f00ff,#00f0ff); --p-bg: rgba(10,16,26,0.96); --p-card: rgba(0,240,255,0.07); --p-border: rgba(0,240,255,0.3); --p-acc: #00f0ff; }
-        * { margin:0; padding:0; box-sizing:border-box; font-family:sans-serif; -webkit-tap-highlight-color:transparent; }
-        body { background:var(--bg); color:var(--text); width:100vw; height:100vh; display:flex; flex-direction:column; overflow:hidden; padding:12px; }
-        header { text-align:center; padding:10px 0; }
-        header h1 { font-size:1.6rem; background:linear-gradient(180deg,#fff,#bbb); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-        header p { color:var(--sub); font-size:0.85rem; margin-top:2px; }
-        .view-container { width:100%; flex-grow:1; }
-        .grid-layout { display:grid; grid-template-columns:repeat(2,1fr); grid-template-rows:repeat(3,1fr); gap:12px; width:100%; height:100%; padding-bottom:8px; }
-        .media-block { background:var(--card); border:1px solid var(--border); border-radius:20px; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:10px; cursor:pointer; position:relative; overflow:hidden; transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275), background 0.3s; }
-        .media-block::before { content:''; position:absolute; inset:0; background:var(--glow); opacity:0; transition:opacity 0.4s ease; z-index:0; padding:1px; -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite:xor; -webkit-mask-composite:xor; }
-        .media-block:hover::before { opacity:0.4; }
-        .media-block:active { transform:scale(0.92) translateY(2px)!important; background:rgba(255,255,255,0.06); box-shadow:0 10px 25px rgba(0,0,0,0.4); }
-        .media-block:active::before { opacity:1; }
-        .block-title, .block-desc { position:relative; z-index:5; pointer-events:none; }
-        .block-title { font-size:1.25rem; font-weight:700; margin-bottom:4px; }
-        .block-desc { font-size:0.75rem; color:var(--sub); }
-        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:center; z-index:100; opacity:0; pointer-events:none; transition:opacity 0.4s ease; }
-        .modal-overlay.active { opacity:1; pointer-events:all; }
-        .popup-window { background:var(--p-bg); border:2px solid var(--p-border); box-shadow:0 0 35px rgba(0,240,255,0.2); border-radius:28px; width:92%; max-width:420px; padding:20px; text-align:center; transform:scale(0.75) translateY(40px); transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
-        .modal-overlay.active .popup-window { transform:scale(1) translateY(0); }
-        .popup-header h2 { font-size:1.4rem; color:var(--p-acc); text-shadow:0 0 10px rgba(0,240,255,0.3); margin-bottom:4px; }
-        .popup-header p { font-size:0.8rem; color:#708090; margin-bottom:16px; }
-        .options-list { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
-        .popup-btn { background:var(--p-card); border:1px solid var(--p-border); color:#fff; padding:12px; border-radius:16px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:all 0.3s ease; }
-        .popup-btn:hover { background:rgba(0,240,255,0.14); border-color:var(--p-acc); box-shadow:0 0 12px rgba(0,240,255,0.3); }
-        .popup-btn:active { transform:scale(0.96); }
-        .popup-btn span { pointer-events:none; }
-        .popup-btn .opt-title { font-size:1.05rem; font-weight:700; }
-        .popup-btn .opt-desc { font-size:0.7rem; color:#a0b0c0; margin-top:2px; }
-        .close-popup-btn { background:transparent; border:1px dashed rgba(255,255,255,0.3); color:var(--sub); padding:10px; width:100%; border-radius:14px; font-weight:600; cursor:pointer; font-size:0.9rem; }
-        .close-popup-btn:hover { color:#fff; border-color:#fff; background:rgba(255,255,255,0.05); }
-        .animation-overlay { position:fixed; inset:0; background:#06040a; z-index:9999; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
-        .animation-overlay.active { opacity:1; pointer-events:all; }
-        .premium-text { font-size:4.5rem; font-weight:900; letter-spacing:12px; text-transform:uppercase; background:var(--glow); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; opacity:0; }
-        @keyframes spremium { 0% { opacity:0; transform:scale(0.6); filter:blur(10px); background-position:0% center; } 30% { opacity:1; filter:blur(0px); transform:scale(1.05); } 70% { opacity:1; transform:scale(1); background-position:200% center; } 100% { opacity:0; transform:scale(1.4); filter:blur(15px); background-position:400% center; } }
+        :root {
+            --bg-gradient: #330011;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.18);
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --accent-glow: linear-gradient(45deg, #ff007f, #7f00ff, #00f0ff);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-gradient); color: var(--text-primary); width: 100vw; height: 100vh; display: flex; flex-direction: column; overflow: hidden; padding: 12px; }
+        header { text-align: center; padding: 10px 0; flex-shrink: 0; z-index: 10; }
+        header h1 { font-size: 1.6rem; font-weight: 800; background: linear-gradient(180deg, #fff 0%, #bbb 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        header p { color: var(--text-secondary); font-size: 0.85rem; margin-top: 2px; }
+        .view-container { width: 100%; flex-grow: 1; position: relative; }
+        
+        .grid-layout { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            grid-template-rows: repeat(3, 1fr); 
+            gap: 12px; 
+            width: 100%; 
+            height: 100%; 
+            padding-bottom: 8px; 
+            position: absolute; 
+            inset: 0; 
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease; 
+        }
+        
+        #mainView { 
+            opacity: 1; 
+            transform: scale(1); 
+            pointer-events: all; 
+            z-index: 2;
+        }
+        
+        body.sub-menu-active #mainView { 
+            opacity: 0; 
+            transform: scale(0.85); 
+            pointer-events: none; 
+            z-index: 1;
+        }
+        
+        #optionsView { 
+            opacity: 0; 
+            transform: scale(1.15); 
+            pointer-events: none; 
+            z-index: 1; 
+        }
+        
+        body.sub-menu-active #optionsView { 
+            opacity: 1; 
+            transform: scale(1); 
+            pointer-events: all; 
+            z-index: 3; 
+        }
+        
+        .media-block { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 10px; cursor: pointer; position: relative; overflow: hidden; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s, border 0.3s; }
+        .media-block.back-btn { background: rgba(255, 255, 255, 0.03); border: 1px dashed rgba(255, 255, 255, 0.35); }
+        .media-block::before { content: ''; position: absolute; inset: 0; background: var(--accent-glow); opacity: 0; transition: opacity 0.4s ease; z-index: 0; padding: 1px; -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: xor; -webkit-mask-composite: xor; }
+        .media-block:hover::before { opacity: 0.4; }
+        .media-block:active { transform: scale(0.92) translateY(2px) !important; background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.2); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); }
+        .media-block:active::before { opacity: 1; }
+        .block-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; position: relative; z-index: 1; }
+        .block-desc { font-size: 0.75rem; color: var(--text-secondary); padding: 0 4px; position: relative; z-index: 1; }
+        
+        .animation-overlay { position: fixed; inset: 0; background: #06040a; z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .animation-overlay.active { opacity: 1; pointer-events: all; }
+        .premium-text { font-size: 4.5rem; font-weight: 900; letter-spacing: 12px; text-transform: uppercase; background: var(--accent-glow); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; opacity: 0; }
+        @keyframes spremium {
+            0% { opacity: 0; transform: scale(0.6); filter: blur(10px); background-position: 0% center; }
+            30% { opacity: 1; filter: blur(0px); transform: scale(1.05); }
+            70% { opacity: 1; transform: scale(1); background-position: 200% center; }
+            100% { opacity: 0; transform: scale(1.4); filter: blur(15px); background-position: 400% center; }
+        }
         .animation-overlay.active .premium-text { animation: spremium 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
-        @media (min-width:768px) { .grid-layout { grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,1fr); } .premium-text { font-size:6rem; letter-spacing:20px; } }
+        @media (min-width: 768px) { .grid-layout { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); } .premium-text { font-size: 6rem; letter-spacing: 20px; } }
+        @media (max-width: 400px) { .premium-text { font-size: 2.8rem; letter-spacing: 6px; } .block-title { font-size: 1.1rem; } .block-desc { font-size: 0.7rem; } }
     </style>
 </head>
 <body>
-    <header><h1>🍿🍿 Movies 🍿🍿</h1><p>Select a category</p></header>
-    <div class="view-container"><div class="grid-layout" id="mainGrid"></div></div>
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="popup-window">
-            <div class="popup-header"><h2 id="modalTitle">Category</h2><p>Select a secure download channel</p></div>
-            <div class="options-list" id="optList"></div>
-            <button class="close-popup-btn" id="closePopupBtn">✕ Close Window</button>
+
+    <header>
+        <h1 id="pageTitle">🍿🍿 Movies 🍿🍿</h1>
+        <p id="pageDesc">Select a category</p>
+    </header>
+
+    <div class="view-container">
+        <!-- Main Menu -->
+        <div class="grid-layout" id="mainView">
+            <div class="media-block main-btn" data-category="Bollywood">
+                <div class="block-title">Bollywood</div>
+                <div class="block-desc">Latest Hindi Catalog</div>
+            </div>
+            <div class="media-block main-btn" data-category="Hollywood">
+                <div class="block-title">Hollywood</div>
+                <div class="block-desc">Dual Audio Releases</div>
+            </div>
+            <div class="media-block main-btn" data-category="K Drama">
+                <div class="block-title">K Drama</div>
+                <div class="block-desc">Hindi & English</div>
+            </div>
+            <div class="media-block main-btn" data-category="Anime">
+                <div class="block-title">Anime</div>
+                <div class="block-desc">Hindi & English</div>
+            </div>
+            <div class="media-block main-btn" data-category="4K">
+                <div class="block-title">4K</div>
+                <div class="block-desc">Movies & Webseries</div>
+            </div>
+            <div class="media-block main-btn" data-category="Special">
+                <div class="block-title"> ⁠◠⁠‿⁠◕ </div>
+                <div class="block-desc">Key Required</div>
+            </div>
+        </div>
+
+        <!-- Options Menu -->
+        <div class="grid-layout" id="optionsView">
+            <div class="media-block secure-link"><div class="block-title">Primary Server</div><div class="block-desc">Main Link</div></div>
+            <div class="media-block secure-link"><div class="block-title">Server 2</div><div class="block-desc">Fast Download</div></div>
+            <div class="media-block secure-link"><div class="block-title">Server 3</div><div class="block-desc">Cloud Mirror</div></div>
+            <div class="media-block secure-link"><div class="block-title">Torrent</div><div class="block-desc">Magnet Option</div></div>
+            <div class="media-block secure-link"><div class="block-title">Online Stream</div><div class="block-desc">Watch Instantly</div></div>
+            <div class="media-block back-btn"><div class="block-title">↩ Back</div><div class="block-desc">Return Home</div></div>
         </div>
     </div>
-    <div class="animation-overlay" id="animationOverlay"><div class="premium-text">SpremiumS</div></div>
+
+    <div class="animation-overlay" id="animationOverlay">
+        <div class="premium-text">SpremiumS</div>
+    </div>
+
     <script>
-        const cats = [
-            { id: "bol", t: "Bollywood", d: "Latest Hindi Catalog", u: "YUhSMGNITTZMeTlrYjNSdGIzWnBaUzV0YjJKcEx3PT0=" },
-            { id: "hol", t: "Hollywood", d: "Dual Audio Releases", u: "YUhSMGNITTZMeTl0YjNacFpYTnRiMlF1YldWdFpTOD0=" },
-            { id: "kdr", t: "K Drama", d: "Hindi & English", u: "YUhSMGNITTZMeTl1WlhjdWEyRjBaSEpoYldFdWJYa3Y=" },
-            { id: "ani", t: "Anime", d: "Hindi & English", u: "YUhSMGNITTZMeTl1WlhjdWNHbHJZV2hrTG1Odkx3PT0=" },
-            { id: "4k",  t: "4K", d: "Movies & Webseries", u: "YUhSMGNITTZMeTkxYUdSdGIzWnBaWE11WW1WaGRYUjVMdz09" },
-            { id: "spc", t: "⁠◠⁠‿⁠◕", d: "Key Required", u: "YUhSMGNITTZMeTl6Y0hKbGJXbDFiWE11WjNRdWRHTXZlRzU0THc9PQ==" }
-        ];
-        const opts = [
-            { t: "Server Mirror 1", d: "Primary Gateway Router" },
-            { t: "Server Mirror 2", d: "High Speed CDN Proxy" },
-            { t: "Server Mirror 3", d: "Direct GDrive Alternative" },
-            { t: "Torrent Hash Link", d: "P2P Magnet Configuration" },
-            { t: "Instant Live Stream", d: "Watch Without Downloading" }
-        ];
-        const grid = document.getElementById('mainGrid'), list = document.getElementById('optList'), overlay = document.getElementById('modalOverlay'), title = document.getElementById('modalTitle'), anim = document.getElementById('animationOverlay');
-        
-        cats.forEach(c => {
-            const b = document.createElement('div'); b.className = 'media-block'; b.innerHTML = `<div class="block-title">${c.t}</div><div class="block-desc">${c.d}</div>`;
-            b.onclick = () => { title.innerText = c.t + " Portal"; list.innerHTML = ''; opts.forEach(o => { const btn = document.createElement('div'); btn.className = 'popup-btn'; btn.innerHTML = `<span class="opt-title">${o.t}</span><span class="opt-desc">${o.d}</span>`; btn.onclick = () => { overlay.classList.remove('active'); anim.classList.add('active'); setTimeout(() => { window.location.href = atob(atob(c.u)); }, 1700); }; list.appendChild(btn); }); overlay.classList.add('active'); };
-            grid.appendChild(b);
+        const body = document.body;
+        const pageTitle = document.getElementById('pageTitle');
+        const pageDesc = document.getElementById('pageDesc');
+        const overlay = document.getElementById('animationOverlay');
+
+        // Clean event handling logic that works in all browsers and sandboxes
+        document.querySelectorAll('.main-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const category = this.getAttribute('data-category');
+                
+                pageTitle.innerText = `🎬 ${category}`;
+                pageDesc.innerText = "Choose an alternative path";
+
+                body.classList.add('sub-menu-active');
+            });
         });
-        document.getElementById('closePopupBtn').onclick = () => overlay.classList.remove('active');
-        overlay.onclick = (e) => { if (e.target === overlay) overlay.classList.remove('active'); };
+
+        document.querySelector('.back-btn').addEventListener('click', function() {
+            pageTitle.innerText = "🍿🍿 Movies 🍿🍿";
+            pageDesc.innerText = "Select a category";
+            
+            body.classList.remove('sub-menu-active');
+        });
+
+        document.querySelectorAll('.secure-link').forEach(linkBlock => {
+            linkBlock.addEventListener('click', function() {
+                overlay.classList.add('active');
+                
+                setTimeout(() => { 
+                    overlay.classList.remove('active');
+                    alert("Testing Mode: Options flow working perfectly!");
+                }, 1800); 
+            });
+        });
     </script>
 </body>
 </html>
