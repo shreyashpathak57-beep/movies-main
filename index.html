@@ -1,115 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#050509">
-<title>SpremiumS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Premium Entertainment Hub</title>
+    <style>
+        :root {
+            /* Restored original premium dark purple theme background */
+            --bg-gradient: #330011;
+            
+            /* Restored original subtle dark card variables */
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.18);
+            
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --accent-glow: linear-gradient(45deg, #ff007f, #7f00ff, #00f0ff);
+        }
 
-<style>
-* {
-    box-sizing: border-box;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent; /* Removes default mobile tap highlight box */
+        }
 
-html, body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-}
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Prevents webview scrolling completely */
+            padding: 12px;
+        }
 
-body {
-    display: grid;
-    place-items: center;
-    background: #050509;
-    color: #f5e3b5;
-    font-family: Arial, sans-serif;
-}
+        header {
+            text-align: center;
+            padding: 10px 0;
+            flex-shrink: 0;
+            z-index: 1;
+        }
 
-.content {
-    text-align: center;
-    animation: enter 0.3s ease-out both;
-}
+        header h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(180deg, #fff 0%, #bbb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-.logo {
-    font-size: clamp(38px, 10vw, 64px);
-    font-weight: 900;
-    letter-spacing: 3px;
-    background: linear-gradient(
-        100deg,
-        #8e7040,
-        #fff4d1,
-        #c9a65f,
-        #fff9e9
-    );
-    background-size: 200% auto;
-    color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
-    animation: shine 0.5s linear;
-}
+        header p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 2px;
+        }
 
-.status {
-    margin-top: 15px;
-    color: #99949a;
-    font-size: 11px;
-    letter-spacing: 3px;
-}
+        /* Full Height Grid Configuration (2x3 Layout, no scrolling) */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            flex-grow: 1;
+            padding-bottom: 8px;
+            z-index: 1;
+        }
 
-.fallback {
-    margin-top: 24px;
-    font-size: 12px;
-}
+        /* Restored original block color scheme with updated mobile features */
+        .media-block {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            /* Keeps the premium click physics */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s, border 0.3s;
+        }
 
-a {
-    color: #f5e3b5;
-}
+        /* Original premium gradient border highlight outline */
+        .media-block::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent-glow);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+            padding: 1px;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            -webkit-mask-composite: xor;
+        }
 
-@keyframes enter {
-    from {
-        opacity: 0;
-        transform: scale(.94);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
+        /* Desktop hover effect support */
+        .media-block:hover::before {
+            opacity: 0.4;
+        }
 
-@keyframes shine {
-    from { background-position: 100% center; }
-    to { background-position: -100% center; }
-}
-</style>
+        /* Interactive Premium Tap/Click Mechanics */
+        .media-block:active {
+            transform: scale(0.92) translateY(2px) !important;
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Activates the highlight fully when clicked */
+        .media-block:active::before {
+            opacity: 1;
+        }
+
+        .block-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .block-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            padding: 0 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Unchanged Premium Animation Overlay */
+        .animation-overlay {
+            position: fixed;
+            inset: 0;
+            background: #06040a;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .animation-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .premium-text {
+            font-size: 4.5rem;
+            font-weight: 900;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            background: var(--accent-glow);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+        }
+
+        @keyframes spremium {
+            0% {
+                opacity: 0;
+                transform: scale(0.6);
+                filter: blur(10px);
+                background-position: 0% center;
+            }
+            30% {
+                opacity: 1;
+                filter: blur(0px);
+                transform: scale(1.05);
+            }
+            70% {
+                opacity: 1;
+                transform: scale(1);
+                background-position: 200% center;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.4);
+                filter: blur(15px);
+                background-position: 400% center;
+            }
+        }
+
+        .animation-overlay.active .premium-text {
+            animation: spremium 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        /* Landscape / Tablet Layout Adjustments (3x2 Grid) */
+        @media (min-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(2, 1fr);
+            }
+            .premium-text {
+                font-size: 6rem;
+                letter-spacing: 20px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .premium-text { font-size: 2.8rem; letter-spacing: 6px; }
+            .block-title { font-size: 1.1rem; }
+            .block-desc { font-size: 0.7rem; }
+        }
+    </style>
 </head>
-
 <body>
-<main class="content">
-    <div class="logo">SpremiumS</div>
-    <div class="status">ENTERING PREMIUM EXPERIENCE</div>
-    <div class="fallback">
-        <a href="https://spremiums.gt.tc/lux/">Continue now ↗</a>
+
+    <div class="glow-orb"></div>
+    <div class="glow-orb-2"></div>
+
+    <header>
+        <h1></h1>🍿🍿 Movies 🍿🍿</h1>
+        <p>Select a category</p>
+    </header>
+
+    <div class="grid-container">
+        <!-- Block 1 -->
+        <div class="media-block" data-secure="YUhSMGNITTZMeTlrYjNSdGIzWnBaUzV0YjJKcEx3PT0=">
+            <div class="block-title">Bollywood</div>
+            <div class="block-desc">Latest Hindi Catalog</div>
+        </div>
+
+        <!-- Block 2 -->
+        <div class="media-block" data-secure="YUhSMGNITTZMeTl0YjNacFpYTnRiMlF1YldWdFpTOD0=">
+            <div class="block-title">Hollywood</div>
+            <div class="block-desc">Dual Audio Releases</div>
+        </div>
+
+        <!-- Block 3 -->
+        <div class="media-block" data-secure="YUhSMGNITTZMeTl1WlhjdWEyRjBaSEpoYldFdWJYa3Y=">
+            <div class="block-title">K Drama</div>
+            <div class="block-desc">Hindi & English</div>
+        </div>
+
+        <!-- Block 4 -->
+        <div class="media-block" data-secure="YUhSMGNITTZMeTl1WlhjdWNHbHJZV2hrTG1Odkx3PT0=">
+            <div class="block-title">Anime</div>
+            <div class="block-desc">Hindi & English</div>
+        </div>
+
+        <!-- Block 5 -->
+        <div class="media-block" data-secure="YUhSMGNITTZMeTkxYUdSdGIzWnBaWE11WW1WaGRYUjVMdz09">
+            <div class="block-title">4K</div>
+            <div class="block-desc">Movies & Webseries</div>
+        </div>
+
+        <!-- Block 6 -->
+        <div class="media-block" data-secure="YUhSMGNITTZMeTkzZDNjdWVIaDRabTlzYkc5M0xtTnZiUzg9">
+            <div class="block-title"> ⁠◠⁠‿⁠◕ </div>
+            <div class="block-desc">Key Required</div>
+        </div>
     </div>
-</main>
 
-<script>
-(function () {
-    "use strict";
+    <!-- Screen Animation Interstitial -->
+    <div class="animation-overlay" id="animationOverlay">
+        <div class="premium-text">SpremiumS</div>
+    </div>
 
-    var destination = "https://spremiums.gt.tc/lux/";
-    var redirected = false;
-
-    function redirect() {
-        if (redirected) return;
-        redirected = true;
-        window.location.replace(destination);
-    }
-
-    // Brief animation, then redirect.
-    window.setTimeout(redirect, 300);
-
-    // Keep the redirect available if the timer is delayed.
-    window.setTimeout(redirect, 700);
-})();
-</script>
+    <script>
+        document.querySelectorAll('.media-block').forEach(block => {
+            block.addEventListener('click', function() {
+                const stage1 = this.getAttribute('data-secure');
+                const targetUrl = atob(atob(stage1));
+                const overlay = document.getElementById('animationOverlay');
+                
+                overlay.classList.add('active');
+                
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 1700); 
+            });
+        });
+    </script>
 </body>
 </html>
